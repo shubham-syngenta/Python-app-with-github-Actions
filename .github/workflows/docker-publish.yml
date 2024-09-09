@@ -13,7 +13,7 @@ jobs:
     # Check out the repository code
     - name: Checkout code
       uses: actions/checkout@v3
-      
+
     # Define environment variables for reuse
     - name: Set environment variables
       run: |
@@ -22,13 +22,17 @@ jobs:
         # Alternative: Use GitHub run number for tagging
         # echo "IMAGE_TAG=${{ github.run_number }}" >> $GITHUB_ENV
 
-    # Log in to Amazon ECR
-    - name: Log in to Amazon ECR
-      uses: aws-actions/amazon-ecr-login@v2
-
-
-
-    # Build the Docker image
+    - name: Setup AWS ECR Details
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{secrets.AWS_REGION}}
+    - name: Login to Amazon ECR
+      id: login-pf-aws-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+    
+      # Build the Docker image
     - name: Build Docker image
       run: |
         docker build -t $ECR_URI:$IMAGE_TAG .
