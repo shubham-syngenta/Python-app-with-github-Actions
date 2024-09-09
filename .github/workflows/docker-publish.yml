@@ -14,14 +14,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    # Define environment variables for reuse
-    - name: Set environment variables
-      run: |
-        echo "ECR_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}" >> $GITHUB_ENV
-        echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
-        # Alternative: Use GitHub run number for tagging
-        # echo "IMAGE_TAG=${{ github.run_number }}" >> $GITHUB_ENV
-
     - name: Setup AWS ECR Details
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -31,7 +23,15 @@ jobs:
     - name: Login to Amazon ECR
       id: login-pf-aws-ecr
       uses: aws-actions/amazon-ecr-login@v1
-    
+
+    # Define environment variables for reuse
+    - name: Set environment variables
+      run: |
+        echo "ECR_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPO_NAME }}" >> $GITHUB_ENV
+        echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
+        # Alternative: Use GitHub run number for tagging
+        # echo "IMAGE_TAG=${{ github.run_number }}" >> $GITHUB_ENV
+
       # Build the Docker image
     - name: Build Docker image
       run: |
